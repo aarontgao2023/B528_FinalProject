@@ -9,22 +9,50 @@ knitr::opts_chunk$set(echo = TRUE)
 source('NMF_functions.R')
 ```
 
-## R Markdown
+## Data Read and Quality Control
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r echo=FALSE, warning=FALSE}
+muv41 = read.table("GSM3905417_MUV41.txt")
+muv41 = data_process(muv41)
+dim(muv41)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+## rank selection
+```{r}
+muv41[muv41<0]=0.000001
+estimate = nmf(muv41, rank=2:5, method="brunet", nrun=10, seed=888)
+my_rank = rank_selection(muv41, a = 2, b = 6)
+my_rank
+```
+```{r}
+plot(estimate)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## gene metaprograms
+```{r}
+metaprogram = nmf_process(matrix = muv41, rank = 3, method = "brunet")
+metaprogram
+```
+
+
+## GO Enrichment analysis
+```{r message=TRUE, warning=FALSE}
+res1 = GOenrich(allgene = rownames(muv41), diffgene = metaprogram[[1]])
+res2 = GOenrich(allgene = rownames(muv41), diffgene = metaprogram[[2]])
+res3 = GOenrich(allgene = rownames(muv41), diffgene = metaprogram[[3]])
+res <- list(res1,res2,res3)
+names(res) <- c(1,2,3)
+```
+```{r}
+head(res1)
+head(res2)
+head(res3)
+```
+
+## GO heatmap
+```{r}
+GOheatmap = plotGOEnrich (res,n = 3,fdr.cutoff = 2,fc.cutoff = 2)
+ggsave("GOheatmap_muv41.png",plot =GOheatmap, height = 5,width = 6)
+GOheatmap
+```
+
