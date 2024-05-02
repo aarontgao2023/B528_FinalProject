@@ -11,20 +11,22 @@ source('NMF_functions.R')
 
 ## Data Read and Quality Control
 
-```{r echo=FALSE, warning=FALSE}
+```{r echo=TRUE, warning=FALSE}
 muv41 = read.table("GSM3905417_MUV41.txt")
 muv41 = data_process(muv41)
+muv41[muv41<0]=0.000001
 dim(muv41)
 ```
 
 ## rank selection
-```{r}
-muv41[muv41<0]=0.000001
-estimate = nmf(muv41, rank=2:5, method="brunet", nrun=10, seed=888)
-my_rank = rank_selection(muv41, a = 2, b = 6)
+This function is very time consuming and always cause problem when rendering the md file. However I run it individually and get the ultimate rank 3. Therefore I will skip this chunk when rendering the md file
+```{r, eval=FALSE}
+my_rank = rank_selection(muv41, a = 2, b = 5)
 my_rank
 ```
+
 ```{r}
+estimate = nmf(muv41, rank=2:5, method="brunet", nrun=10, seed=888)
 plot(estimate)
 ```
 
@@ -52,7 +54,6 @@ head(res3)
 ## GO heatmap
 ```{r}
 GOheatmap = plotGOEnrich (res,n = 3,fdr.cutoff = 2,fc.cutoff = 2)
-ggsave("GOheatmap_muv41.png",plot =GOheatmap, height = 5,width = 6)
 GOheatmap
 ```
 
