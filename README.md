@@ -9,10 +9,11 @@ Tianchuan Gao
 05/2/2024
 
 ## File
+* **[NMF.md](NMF.md): demo illustration output file**
 * [NMF_functions.R](NMF_functions.R): contains all the function I wrote for the analysis pipeline
 * [GSM3905417_MUV41.txt](GSM3905417_MUV41.txt): demo scRNA-seq data
 * [NMF.rmd](NMF.rmd): demo illustration
-* [NMF.md](NMF.md): demo illustration output file
+
 
 ## Programing Language & Version
  R version 4.2.1
